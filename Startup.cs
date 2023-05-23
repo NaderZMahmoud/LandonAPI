@@ -1,3 +1,5 @@
+using LandonAPI2.Filters;
+using LandonAPI2.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,8 +28,15 @@ namespace LandonAPI2
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<HotelInfo>(Configuration.GetSection("Info"));
             services.AddControllers();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services
+                .AddMvc(options =>
+                {
+                    options.Filters.Add<JsonExceptionFilter>(); 
+                    options.Filters.Add<RequiredHttpsOrCloseAttribute>();
+                })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddRouting(options => options.LowercaseUrls = true);
             services.AddSwaggerGen();
             services.AddApiVersioning(options =>
@@ -35,6 +44,15 @@ namespace LandonAPI2
                 options.DefaultApiVersion = new ApiVersion(1, 0);
                 options.ApiVersionReader = new MediaTypeApiVersionReader();
                 options.AssumeDefaultVersionWhenUnspecified = true;
+                options.ReportApiVersions = true;
+                options.ApiVersionSelector = new CurrentImplementationApiVersionSelector(options);
+            });
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowMyApp", policy =>
+                {
+                    policy.AllowAnyOrigin();
+                });
             });
         }
 
@@ -48,8 +66,13 @@ namespace LandonAPI2
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Sample API"));
 
             }
-
-            app.UseHttpsRedirection();
+            else
+            {
+                app.UseHsts();
+            }
+            app.UseCors("AllowMyApp");
+            //app.UseMvc();
+            // app.UseHttpsRedirection();
 
             app.UseRouting();
 
@@ -59,6 +82,7 @@ namespace LandonAPI2
             {
                 endpoints.MapControllers();
             });
+           
         }
     }
 }

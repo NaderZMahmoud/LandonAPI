@@ -5,6 +5,7 @@ namespace LandonAPI2.Controllers
 {
     [Route("/")]
     [ApiController]
+    [ApiVersion("1.0")]
     public class RootController: ControllerBase
     {
         [HttpGet(Name=nameof(GetRoot))]   
@@ -16,6 +17,10 @@ namespace LandonAPI2.Controllers
                 rooms = new
                 {
                     href=Url.Link(nameof(RoomsController.GetRoom), null)
+                },
+                Info = new
+                {
+                    href=Url.Link(nameof(InfoController.GetInfo), null)
                 }
             };
         return Ok(response);    

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading;
 
 namespace LandonAPI2.Controllers
@@ -10,7 +11,7 @@ namespace LandonAPI2.Controllers
         [HttpGet(Name =nameof(GetRoom))]
         public IActionResult GetRoom()
         {
-            throw  new System.Exception();  
+            throw  new NotImplementedException();  
         }
     }
 }
