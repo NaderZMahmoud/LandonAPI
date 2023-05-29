@@ -9,10 +9,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LandonAPI2.Services;
 
 namespace LandonAPI2
 {
@@ -29,14 +31,18 @@ namespace LandonAPI2
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<HotelInfo>(Configuration.GetSection("Info"));
+            services.AddScoped<IRoomService, DefaultRoomService>();
+            // use in-memory database for quick dev and testing
+            // TODO: Swap out for real Database in Production
+            services.AddDbContext<HotelApiDbContext>(options => options.UseInMemoryDatabase("LandonDb"));
             services.AddControllers();
             services
                 .AddMvc(options =>
                 {
-                    options.Filters.Add<JsonExceptionFilter>(); 
+                    options.Filters.Add<JsonExceptionFilter>();
                     options.Filters.Add<RequiredHttpsOrCloseAttribute>();
-                })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+                });
+              //  .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddRouting(options => options.LowercaseUrls = true);
             services.AddSwaggerGen();
             services.AddApiVersioning(options =>

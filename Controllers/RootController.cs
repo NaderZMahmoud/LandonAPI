@@ -20,7 +20,7 @@ namespace LandonAPI2.Controllers
                 },
                 Info = new
                 {
-                    href=Url.Link(nameof(InfoController.GetInfo), null)
+                    href = Url.Link(nameof(InfoController.GetInfo), null)
                 }
             };
         return Ok(response);    

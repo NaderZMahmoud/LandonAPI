@@ -7,7 +7,7 @@ namespace LandonAPI2.Controllers
 {
     
     [ApiController]
-    [Route("/Info")]
+    [Route("/[controller]")]
     public class InfoController: ControllerBase
     {
         private readonly HotelInfo _hotelInfo;
@@ -17,8 +17,8 @@ namespace LandonAPI2.Controllers
             _hotelInfo = hotelInfoWrapper.Value;
         }
 
-        [HttpGet(nameof(GetInfo))]
-       // [ProducesResponseType(200)]
+        [HttpGet(Name = nameof(GetInfo))]
+        [ProducesResponseType(200)]
         public ActionResult<HotelInfo> GetInfo()
         {
             _hotelInfo.Href = Url.Link(nameof(GetInfo),null);
